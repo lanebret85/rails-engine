@@ -14,9 +14,10 @@ module Api
       end
 
       def update
-        # item = Item.find(params[:id])
-        # render json: ItemSerializer.new(item.update!(item_params))
-        render json: ItemSerializer.new(Item.update!(item_params))
+        item = Item.update!(params[:id], item_params)
+        if item.save
+          render json: ItemSerializer.new(item)
+        end
       end
 
       def destroy
