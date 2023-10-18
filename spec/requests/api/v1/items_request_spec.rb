@@ -140,6 +140,8 @@ describe "Items API" do
 
     item = item_hash[:data]
 
+    # require 'pry';binding.pry
+
     expect(item).to be_a(Hash)
 
     expect(item).to have_key(:id)
@@ -173,5 +175,38 @@ describe "Items API" do
     expect(response).to be_successful
     expect(Item.count).to eq(0)
     expect{ Item.find(item.id) }.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
+  it "can send the info of the merchant associated with an item" do
+    id = create(:item).id
+
+    get "/api/v1/items/#{id}/merchant"
+
+    expect(response).to be_successful
+    
+    item_hash = JSON.parse(response.body,symbolize_names: true)
+    
+    expect(item_hash).to be_a(Hash)
+    
+    item = item_hash[:data]
+    
+    expect(item).to be_a(Hash)
+
+    expect(item).to have_key(:id)
+    expect(item[:id]).to be_a(String)
+    
+    expect(item).to have_key(:type)
+    expect(item[:type]).to eq("item")
+
+    expect(item).to have_key(:relationships)
+    expect(item[:relationships]).to be_a(Hash)
+
+    relationship_model = item[:relationships]
+
+    expect(relationship_model).to be_a(Hash)
+    expect(relationship_model).to have_key(:merchant)
+    expect(relationship_model[:merchant]).to be_a(Hash)
+    
+    merchant = relationship_model[:merchant]
   end
 end
