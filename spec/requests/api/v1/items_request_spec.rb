@@ -189,24 +189,22 @@ describe "Items API" do
     expect(item_hash).to be_a(Hash)
     
     item = item_hash[:data]
-    
+
     expect(item).to be_a(Hash)
 
     expect(item).to have_key(:id)
     expect(item[:id]).to be_a(String)
     
     expect(item).to have_key(:type)
-    expect(item[:type]).to eq("item")
+    expect(item[:type]).to eq("merchant")
 
-    expect(item).to have_key(:relationships)
-    expect(item[:relationships]).to be_a(Hash)
+    expect(item).to have_key(:attributes)
+    expect(item[:attributes]).to be_a(Hash)
 
-    relationship_model = item[:relationships]
+    merchant_attributes = item[:attributes]
 
-    expect(relationship_model).to be_a(Hash)
-    expect(relationship_model).to have_key(:merchant)
-    expect(relationship_model[:merchant]).to be_a(Hash)
-    
-    merchant = relationship_model[:merchant]
+    expect(merchant_attributes).to be_a(Hash)
+    expect(merchant_attributes).to have_key(:name)
+    expect(merchant_attributes[:name]).to be_a(String)
   end
 end
