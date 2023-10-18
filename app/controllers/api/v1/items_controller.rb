@@ -10,11 +10,11 @@ module Api
       end
 
       def create
-        render json: Item.create!(item_params)
+        render json: ItemSerializer.new(Item.create!(item_params)), status: 201
       end
 
       def update
-        render json: Item.update!(item_params)
+        render json: ItemSerializer.new(Item.update!(item_params))
       end
 
       def destroy
