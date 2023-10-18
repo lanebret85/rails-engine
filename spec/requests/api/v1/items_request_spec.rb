@@ -80,7 +80,6 @@ describe "Items API" do
   end
 
   it "can create a new item" do
-    # item = create(:item)
     merchant = create(:merchant)
 
     item_params = {
