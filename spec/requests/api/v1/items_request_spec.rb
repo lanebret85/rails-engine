@@ -207,4 +207,172 @@ describe "Items API" do
     expect(merchant_attributes).to have_key(:name)
     expect(merchant_attributes[:name]).to be_a(String)
   end
+
+  it "can send a single result based on search criteria for an items name" do
+    create(:item, name: "Spaceship for Martians")
+    create(:item, name: "Martini Glass")
+    create(:item, name: "Cool Thing")
+
+    get "/api/v1/items/find?name=Mart"
+
+    expect(response).to be_successful
+
+    item_hash = JSON.parse(response.body,symbolize_names: true)
+
+    expect(item_hash).to be_a(Hash)
+    
+    item = item_hash[:data]
+
+    expect(item).to be_a(Hash)
+
+    expect(item).to have_key(:id)
+    expect(item[:id]).to be_a(String)
+
+    expect(item).to have_key(:type)
+    expect(item[:type]).to eq("item")
+
+    expect(item).to have_key(:attributes)
+    expect(item[:attributes]).to be_a(Hash)
+
+    item_attributes = item[:attributes]
+
+    expect(item_attributes).to be_a(Hash)
+    expect(item_attributes).to have_key(:name)
+    expect(item_attributes[:name]).to eq("Martini Glass")
+    
+    expect(item_attributes).to have_key(:description)
+    expect(item_attributes[:description]).to be_a(String)
+
+    expect(item_attributes).to have_key(:unit_price)
+    expect(item_attributes[:unit_price]).to be_a(Float)
+
+    expect(item_attributes).to have_key(:merchant_id)
+    expect(item_attributes[:merchant_id]).to be_an(Integer)
+  end
+
+  it "can send a single result based on search criteria for an items min price" do
+    create(:item, name: "airpods", unit_price: 200.00)
+    create(:item, name: "ipad", unit_price: 650.00)
+    create(:item, name: "iphone", unit_price: 999.00)
+
+    get "/api/v1/items/find?min_price=150"
+
+    expect(response).to be_successful
+
+    item_hash = JSON.parse(response.body,symbolize_names: true)
+
+    expect(item_hash).to be_a(Hash)
+    
+    item = item_hash[:data]
+
+    expect(item).to be_a(Hash)
+
+    expect(item).to have_key(:id)
+    expect(item[:id]).to be_a(String)
+
+    expect(item).to have_key(:type)
+    expect(item[:type]).to eq("item")
+
+    expect(item).to have_key(:attributes)
+    expect(item[:attributes]).to be_a(Hash)
+
+    item_attributes = item[:attributes]
+
+    expect(item_attributes).to be_a(Hash)
+    expect(item_attributes).to have_key(:name)
+    expect(item_attributes[:name]).to eq("airpods")
+    
+    expect(item_attributes).to have_key(:description)
+    expect(item_attributes[:description]).to be_a(String)
+
+    expect(item_attributes).to have_key(:unit_price)
+    expect(item_attributes[:unit_price]).to eq(200.00)
+
+    expect(item_attributes).to have_key(:merchant_id)
+    expect(item_attributes[:merchant_id]).to be_an(Integer)
+  end
+
+  it "can a single result based on search criteria for an items max price" do
+    create(:item, name: "airpods", unit_price: 200.00)
+    create(:item, name: "ipad", unit_price: 650.00)
+    create(:item, name: "iphone", unit_price: 999.00)
+
+    get "/api/v1/items/find?max_price=750"
+
+    expect(response).to be_successful
+
+    item_hash = JSON.parse(response.body,symbolize_names: true)
+
+    expect(item_hash).to be_a(Hash)
+    
+    item = item_hash[:data]
+
+    expect(item).to be_a(Hash)
+
+    expect(item).to have_key(:id)
+    expect(item[:id]).to be_a(String)
+
+    expect(item).to have_key(:type)
+    expect(item[:type]).to eq("item")
+
+    expect(item).to have_key(:attributes)
+    expect(item[:attributes]).to be_a(Hash)
+
+    item_attributes = item[:attributes]
+
+    expect(item_attributes).to be_a(Hash)
+    expect(item_attributes).to have_key(:name)
+    expect(item_attributes[:name]).to eq("airpods")
+    
+    expect(item_attributes).to have_key(:description)
+    expect(item_attributes[:description]).to be_a(String)
+
+    expect(item_attributes).to have_key(:unit_price)
+    expect(item_attributes[:unit_price]).to eq(200.00)
+
+    expect(item_attributes).to have_key(:merchant_id)
+    expect(item_attributes[:merchant_id]).to be_an(Integer)
+  end
+
+  it "can a single result based on search criteria for an items min and max price" do
+    create(:item, name: "airpods", unit_price: 200.00)
+    create(:item, name: "ipad", unit_price: 650.00)
+    create(:item, name: "iphone", unit_price: 999.00)
+
+    get "/api/v1/items/find?min_price=750&max_price=1000.00"
+
+    expect(response).to be_successful
+
+    item_hash = JSON.parse(response.body,symbolize_names: true)
+
+    expect(item_hash).to be_a(Hash)
+    
+    item = item_hash[:data]
+
+    expect(item).to be_a(Hash)
+
+    expect(item).to have_key(:id)
+    expect(item[:id]).to be_a(String)
+
+    expect(item).to have_key(:type)
+    expect(item[:type]).to eq("item")
+
+    expect(item).to have_key(:attributes)
+    expect(item[:attributes]).to be_a(Hash)
+
+    item_attributes = item[:attributes]
+
+    expect(item_attributes).to be_a(Hash)
+    expect(item_attributes).to have_key(:name)
+    expect(item_attributes[:name]).to eq("iphone")
+    
+    expect(item_attributes).to have_key(:description)
+    expect(item_attributes[:description]).to be_a(String)
+
+    expect(item_attributes).to have_key(:unit_price)
+    expect(item_attributes[:unit_price]).to eq(999.00)
+
+    expect(item_attributes).to have_key(:merchant_id)
+    expect(item_attributes[:merchant_id]).to be_an(Integer)
+  end
 end
