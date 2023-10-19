@@ -29,7 +29,8 @@ describe "Items API" do
 
       item_attributes = item[:attributes]
 
-      # add expects for :name attribute
+      expect(item_attributes).to have_key(:name)
+      expect(item_attributes[:name]).to be_a(String)
 
       expect(item_attributes).to have_key(:description)
       expect(item_attributes[:description]).to be_a(String)
@@ -142,8 +143,6 @@ describe "Items API" do
 
     item = item_hash[:data]
 
-    # require 'pry';binding.pry
-
     expect(item).to be_a(Hash)
 
     expect(item).to have_key(:id)
@@ -186,27 +185,24 @@ describe "Items API" do
 
     expect(response).to be_successful
 
-    # change item_hash et al to merchant_hash, etc.
+    merchant_hash = JSON.parse(response.body,symbolize_names: true)
     
-    item_hash = JSON.parse(response.body,symbolize_names: true)
+    expect(merchant_hash).to be_a(Hash)
     
-    expect(item_hash).to be_a(Hash)
+    merchant = merchant_hash[:data]
+
+    expect(merchant).to be_a(Hash)
+
+    expect(merchant).to have_key(:id)
+    expect(merchant[:id]).to be_a(String)
     
-    item = item_hash[:data]
+    expect(merchant).to have_key(:type)
+    expect(merchant[:type]).to eq("merchant")
 
-    expect(item).to be_a(Hash)
+    expect(merchant).to have_key(:attributes)
+    expect(merchant[:attributes]).to be_a(Hash)
 
-    expect(item).to have_key(:id)
-    expect(item[:id]).to be_a(String)
-    # add expect for item[:id] to eq id
-    
-    expect(item).to have_key(:type)
-    expect(item[:type]).to eq("merchant")
-
-    expect(item).to have_key(:attributes)
-    expect(item[:attributes]).to be_a(Hash)
-
-    merchant_attributes = item[:attributes]
+    merchant_attributes = merchant[:attributes]
 
     expect(merchant_attributes).to be_a(Hash)
     expect(merchant_attributes).to have_key(:name)
