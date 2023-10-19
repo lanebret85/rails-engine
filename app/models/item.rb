@@ -8,11 +8,6 @@ class Item < ApplicationRecord
   validates :unit_price, presence: true
   validates :merchant_id, presence: true
 
-  def self.searched_by_name(params)
-    Item.where("name ILIKE ?", "%#{params}%")
-        .order(:name)
-  end
-
   def self.searched_by_min_price(params)
     Item.where("unit_price >= ?", "#{params}")
     .order(:name)
