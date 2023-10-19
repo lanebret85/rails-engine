@@ -29,6 +29,8 @@ describe "Items API" do
 
       item_attributes = item[:attributes]
 
+      # add expects for :name attribute
+
       expect(item_attributes).to have_key(:description)
       expect(item_attributes[:description]).to be_a(String)
 
@@ -183,6 +185,8 @@ describe "Items API" do
     get "/api/v1/items/#{id}/merchant"
 
     expect(response).to be_successful
+
+    # change item_hash et al to merchant_hash, etc.
     
     item_hash = JSON.parse(response.body,symbolize_names: true)
     
@@ -194,6 +198,7 @@ describe "Items API" do
 
     expect(item).to have_key(:id)
     expect(item[:id]).to be_a(String)
+    # add expect for item[:id] to eq id
     
     expect(item).to have_key(:type)
     expect(item[:type]).to eq("merchant")
