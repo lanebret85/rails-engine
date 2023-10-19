@@ -110,4 +110,50 @@ describe "Merchant API" do
       expect(item_attributes[:merchant_id]).to eq(id)
     end
   end
+
+  it "can send all merchants that match search criteria for a merchants name" do
+    apple_store = create(:merchant, name: "Apple Store")
+    applebees = create(:merchant, name: "Applebees")
+    vance_refrigeration = create(:merchant, name: "Vance Refrigeration and Appliances")
+    market = create(:merchant, name: "Black Market Appendix Shop")
+    michael_scott = create(:merchant, name: "Michael Scott Paper Company")
+
+    get "/api/v1/merchants/find_all?name=app"
+
+    expect(response).to be_successful
+
+    merchants_hash = JSON.parse(response.body,symbolize_names: true)
+
+    expect(merchants_hash).to be_a(Hash)
+    
+    merchants = merchants_hash[:data]
+
+    # require 'pry';binding.pry
+
+    expect(merchants).to be_an(Array)
+
+    returned_merchants = [apple_store, applebees, market, vance_refrigeration]
+    returned_merchant_ids = [apple_store.id, applebees.id, market.id, vance_refrigeration.id]
+    returned_merchant_names = [apple_store.name, applebees.name, market.name, vance_refrigeration.name]
+
+    merchants.each do |merchant|
+      expect(merchant).to be_a(Hash)
+
+      expect(merchant).to have_key(:id)
+      expect(merchant[:id]).to be_a(String)
+      expect(returned_merchant_ids).to include(merchant[:id].to_i)
+
+      expect(merchant).to have_key(:type)
+      expect(merchant[:type]).to eq("merchant")
+
+      expect(merchant).to have_key(:attributes)
+      expect(merchant[:attributes]).to be_a(Hash)
+
+      merchant_attributes = merchant[:attributes]
+
+      expect(merchant_attributes).to have_key(:name)
+      expect(merchant_attributes[:name]).to be_a(String)
+      expect(returned_merchant_names).to include(merchant_attributes[:name])
+    end
+  end
 end
