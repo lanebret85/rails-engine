@@ -124,46 +124,66 @@ describe "Items API" do
     expect(item_attributes[:merchant_id]).to be_an(Integer)
   end
 
-  it "can update an existing item" do
-    id = create(:item).id
-    previous_name = Item.last.name
-    current_description = Item.last.description
-    current_unit_price = Item.last.unit_price
-    current_merchant_id = Item.last.merchant_id
-    item_params = { name: "Item Priori Incantatum" }
-    headers = { "CONTENT_TYPE" => "application/json" }
+  describe "items update endpoint" do
+    it "can update an existing item" do
+      id = create(:item).id
+      previous_name = Item.last.name
+      current_description = Item.last.description
+      current_unit_price = Item.last.unit_price
+      current_merchant_id = Item.last.merchant_id
+      item_params = { name: "Item Priori Incantatum" }
+      headers = { "CONTENT_TYPE" => "application/json" }
 
-    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item_params)
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item_params)
 
-    expect(response).to be_successful
+      expect(response).to be_successful
 
-    item_hash = JSON.parse(response.body, symbolize_names: true)
+      item_hash = JSON.parse(response.body, symbolize_names: true)
 
-    expect(item_hash).to be_a(Hash)
+      expect(item_hash).to be_a(Hash)
 
-    item = item_hash[:data]
+      item = item_hash[:data]
 
-    expect(item).to be_a(Hash)
+      expect(item).to be_a(Hash)
 
-    expect(item).to have_key(:id)
-    expect(item[:id]).to be_a(String)
+      expect(item).to have_key(:id)
+      expect(item[:id]).to be_a(String)
 
-    expect(item).to have_key(:type)
-    expect(item[:type]).to eq("item")
+      expect(item).to have_key(:type)
+      expect(item[:type]).to eq("item")
 
-    expect(item).to have_key(:attributes)
-    expect(item[:attributes]).to be_a(Hash)
+      expect(item).to have_key(:attributes)
+      expect(item[:attributes]).to be_a(Hash)
 
-    item_attributes = item[:attributes]
+      item_attributes = item[:attributes]
 
-    expect(item_attributes[:name]).to be_a(String)
-    expect(item_attributes[:name]).to_not eq(previous_name)
-    expect(item_attributes[:description]).to be_a(String)
-    expect(item_attributes[:description]).to eq(current_description)
-    expect(item_attributes[:unit_price]).to be_a(Float)
-    expect(item_attributes[:unit_price]).to eq(current_unit_price)
-    expect(item_attributes[:merchant_id]).to be_an(Integer)
-    expect(item_attributes[:merchant_id]).to eq(current_merchant_id)
+      expect(item_attributes[:name]).to be_a(String)
+      expect(item_attributes[:name]).to_not eq(previous_name)
+      expect(item_attributes[:description]).to be_a(String)
+      expect(item_attributes[:description]).to eq(current_description)
+      expect(item_attributes[:unit_price]).to be_a(Float)
+      expect(item_attributes[:unit_price]).to eq(current_unit_price)
+      expect(item_attributes[:merchant_id]).to be_an(Integer)
+      expect(item_attributes[:merchant_id]).to eq(current_merchant_id)
+    end
+
+    it "will gracefully handle if the merchant_id entered doesnt exist" do
+      id = create(:item).id
+
+      item_params = { merchant_id: 99999999 }
+      headers = { "CONTENT_TYPE" => "application/json" }
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item_params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+
+      data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(data[:errors]).to be_an(Array)
+      expect(data[:errors].first[:status]).to eq("404")
+      expect(data[:errors].first[:title]).to eq("Validation failed: Merchant must exist")
+    end
   end
 
   it "can destroy an item" do
