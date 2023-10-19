@@ -474,8 +474,6 @@ describe "Items API" do
       
       item_hash = JSON.parse(response.body,symbolize_names: true)
       
-      # require 'pry';binding.pry
-      
       expect(item_hash).to be_a(Hash)
       
       item = item_hash[:data]
